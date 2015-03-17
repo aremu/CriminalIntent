@@ -1,32 +1,31 @@
 package com.example.leodavinci360.criminalintent;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
+import android.os.Bundle;
+import android.app.Dialog;
 import android.view.View;
 import android.widget.DatePicker;
-
+import android.content.Intent;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import android.app.Activity;
+import android.widget.DatePicker.OnDateChangedListener;
 
 
+public class DatePickerFragment extends DialogFragment {
+    public static final String EXTRA_DATE =
+            "com.bignerdranch.android.criminalintent.date";
 
-public class TimePickerFragment extends DialogFragment {
-    public static final String EXTRA_TIME =
-            "com.bignerdranch.android.criminalintent.time";
-    Date mDate;
+    private Date mDate;
 
-    public static TimePickerFragment newInstance(Date date) {
+    public static DatePickerFragment newInstance(Date date) {
         Bundle args = new Bundle();
-        args.putSerializable(EXTRA_TIME, date);
+        args.putSerializable(EXTRA_DATE, date);
 
-        TimePickerFragment fragment = new TimePickerFragment();
+        DatePickerFragment fragment = new DatePickerFragment();
         fragment.setArguments(args);
 
         return fragment;
@@ -37,7 +36,7 @@ public class TimePickerFragment extends DialogFragment {
             return;
 
         Intent i = new Intent();
-        i.putExtra(EXTRA_TIME, mDate);
+        i.putExtra(EXTRA_DATE, mDate);
 
         getTargetFragment()
                 .onActivityResult(getTargetRequestCode(), resultCode, i);
@@ -45,7 +44,7 @@ public class TimePickerFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mDate = (Date)getArguments().getSerializable(EXTRA_TIME);
+        mDate = (Date)getArguments().getSerializable(EXTRA_DATE);
         //Create a calendar to get the year, month, and day
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(mDate);
@@ -57,7 +56,7 @@ public class TimePickerFragment extends DialogFragment {
                 .inflate(R.layout.dialog_date, null);
 
         DatePicker datePicker = (DatePicker)v.findViewById(R.id.dialog_date_datePicker);
-        datePicker.init(year, month, day, new DatePicker.OnDateChangedListener(){
+        datePicker.init(year, month, day, new OnDateChangedListener(){
 
             public void onDateChanged(DatePicker view, int year,
                                       int month, int day){
@@ -71,7 +70,7 @@ public class TimePickerFragment extends DialogFragment {
                 mDate = new GregorianCalendar(year, month, day, hour,
                         minute, second).getTime();
 
-                getArguments().putSerializable(EXTRA_TIME, mDate);
+                getArguments().putSerializable(EXTRA_DATE, mDate);
             }
         });
 
@@ -87,5 +86,4 @@ public class TimePickerFragment extends DialogFragment {
                         })
                 .create();
     }
-
 }
