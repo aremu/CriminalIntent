@@ -1,5 +1,6 @@
 package com.example.leodavinci360.criminalintent;
 
+import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -16,6 +17,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import java.util.Date;
 import android.text.format.DateFormat;
 import java.util.UUID;
+import android.content.Intent;
 
 
 public class CrimeFragment extends Fragment {
@@ -32,11 +34,26 @@ public class CrimeFragment extends Fragment {
     private CheckBox mSolvedCheckBox;
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) return;
+        if (requestCode == REQUEST_DATE) {
+            Date date = (Date) data
+                    .getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+            mCrime.setDate(date);
+            updateDate();
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UUID crimeId = (UUID)getArguments().getSerializable(EXTRA_CRIME_ID);
 
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
+    }
+
+    private void updateDate(){
+        mDateButton.setText(mCrime.getDate().toString());
     }
 
     @Override
@@ -70,6 +87,7 @@ public class CrimeFragment extends Fragment {
                         .newInstance(mCrime.getDate());
                 dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
                 dialog.show(fm, DIALOG_DATE);
+                updateDate();
             }
         });
 
